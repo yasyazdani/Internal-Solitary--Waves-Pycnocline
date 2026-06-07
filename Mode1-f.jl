@@ -3,15 +3,9 @@
 #OffsetArrays 1.17.0
 #JLD2 0.5.15
 
-# E1 setup if you set f= 0
+# E1 (NG-2011) setup: if f= 0
 # if you change f to non zero => the beam angle 45 but ω will be diffrent from the paper
 # ω = sqrt((N2 + f^2) / 2)  here, paper: ω = sqrt((N2) / 2) 
-# θ: beam angle 45 so => m = -k which is equivalent to  m = -k sqrt[(N^2-w^2)/(ω^2- f^2)]
-
-
-# march 23: chcek the impact of thickness
-# it saves file as 
-
 
 
 using Oceananigans
@@ -21,7 +15,7 @@ using Oceananigans.Coriolis: FPlane
 using SpecialFunctions
 using CUDA
 
-#  domain & constants (E2 ) 
+#  domain & constants 
 Lx, H  = 6.0, 0.95
 dx     = 0.004          # 2 mm
 Nx     =  Int(round(Lx / dx))
@@ -29,13 +23,13 @@ Nz     = 238            # vertical count (stretched grid below sets dz min/max t
 
 #Parameters
 N2 =  0.36
-f  = 0.4  #0.35
+f  = 0  #0.2 , 0.4
 #ω = sqrt(N2 / 2) # disperssion
 ω = sqrt((N2 + f^2) / 2) 
 
 
 hp = 0.02
-δp = 0.01  # test various thicknes δp(smaller and larger than 0.01 but not larger than 0.04 or even 0.03)
+δp = 0.01  
 g  = 9.81
 Δp = 0.0205
 N0 = 0.6
@@ -131,9 +125,7 @@ end
 
 # wavemaker geometry (keep xc if you want)
 xc = 0.6
-
-# match their vertical offset from pycnocline: zcen ≈ z_pyc - 2.05 λx
-zc = - 0.8 #-hp  - 2.05 * λx
+zc = - 0.8 
 # ------------------------------------------------------
 
 
@@ -234,8 +226,7 @@ model = NonhydrostaticModel(; grid,
 # background stratification; start at rest
 
 bbar(z) = z >= -hp  ? 0.0 : (g * Δp / 2) * erf((z + hp) / (δp/2)) + (z < -hp ? N0^2 * (z + hp) : 0.0)  # top b is zero
-#bbar(z) = (g * Δp / 2) * erf((z + hp) / (δp/2)) +
-#          (z < -hp ? N0^2 * (z + hp) : 0.0)
+
 
 set!(model, u=0, v=0, w=0, b=(x,y,z)->bbar(z))
 
