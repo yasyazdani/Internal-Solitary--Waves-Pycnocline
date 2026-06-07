@@ -1,3 +1,5 @@
+# plot u field and b in the pycnoclined reagion, parameters are based on E1
+
 using Oceananigans
 using Oceananigans.OutputReaders: FieldTimeSeries
 using Oceananigans.Grids: xnodes, znodes
