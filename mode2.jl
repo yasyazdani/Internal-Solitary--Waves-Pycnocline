@@ -1,16 +1,8 @@
-# March-15-mode2.jl —  on gpu
-# sponge where s is defined as sigmiod , right wall only
+# on gpu
 # Oceananigans 0.97.7
 # CUDA 5.8.3
 #OffsetArrays 1.17.0
 #JLD2 0.5.15
-# 3 layers similar to NG 2011
-# compared to the previous codes: I don't have A, Cf = Uf/Tf like the paper, Uf = U0 where 
-# U0 = As_target * N0 * λx_res * sin(θi)   # => U0 by Eq 20
-# removing sponge in b
-# the code is working but no ISW after 180 s in Feb-004 so i am moaking the envelope larger but futher away from the middle layer
-#changing the angle for Uf to theta not theta_i
-#changing dx from 0.002 to 0.001, and its coresponding dz
 
 using Oceananigans
 using Oceananigans.OutputWriters: JLD2Writer, TimeInterval
@@ -63,7 +55,6 @@ end
 Ni = Ni_from_profile(; ω, hp, δp, g, Δp, N0)
 θi = asin(ω / Ni)
 
-#  λx_res so μn = 1
 n = 2  # mode-2 (E2 target)
 λx_res = 2 * δp / ((n - 1) * tan(θi))
 k = 2π / λx_res
@@ -74,7 +65,6 @@ Tf = 2π / ω          # forcing period (paper's Tf)
 
 θ = asin(ω / N0)
 Uf = As_target * N0 * λx_res * sin(θ) # => U0 by Eq 20, then they used Uf ≈ U0? 
-#Cf = Uf / Tf 2-Feb-004.mp4
 Cf =  Uf / Tf
 
 
@@ -146,17 +136,7 @@ end
 end
 
 
-# Feb-004-gpu.jl the one minute video
-# wavemaker geometry
-#xc = 0.6               # forcing near left boundary
-#zc = -0.35              # forcing near top
 
-# envelope widths (narrow Gaussian in terms of λx = Lx / Nλx)
-#σz = 0.1 *  H # 0.3 * (Lx / Nλx)  
-#σx = 0.3 * (Lx / Nλx)  
-
-# new ------------------------------------
-# your λx (you already have this)
 λx = λx_res
 
 # envelope widths (match Diamessis et al. 2014)
