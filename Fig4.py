@@ -1,3 +1,6 @@
+# solve eigenvalue problem 
+# Figure 4 in NG-2011
+
 import numpy as np
 import matplotlib.pyplot as plt
 
